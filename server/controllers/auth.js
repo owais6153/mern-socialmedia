@@ -16,7 +16,7 @@ export const register = async (req, res) => {
         } = req.body;
 
         const user = await User.findOne({ email: email });
-        if (user) return res.status(401).json({ msg: "User already exists." });
+        if (user) return res.status(401).json({ error: "User already exists." });
 
 
         const salt  = await bcrypt.genSalt();
@@ -46,17 +46,17 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-      const { email, password } = req.body;
-      const user = await User.findOne({ email: email });
-      if (!user) return res.status(400).json({ msg: "User does not exist. " });
-  
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(400).json({ msg: "Invalid credentials. " });
-  
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-      delete user.password;
-      res.status(200).json({ token, user });
+        const { email, password } = req.body;
+        const user = await User.findOne({ email: email });
+        if (!user) return res.status(400).json({ error: "User does not exist." });
+    
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(400).json({ error: "Invalid credentials." });
+    
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+        delete user.password;
+        res.status(200).json({ token, user });
     } catch (err) {
-      res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message });
     }
-  };
+};
