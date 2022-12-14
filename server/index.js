@@ -44,7 +44,7 @@ const upload = multer({storage});
 app.post('/auth/register', upload.single('picture'), register);
 
 // Simple routes
-app.use("/auth/login", authRoutes);
+app.use("/auth", authRoutes);
 
 
 
